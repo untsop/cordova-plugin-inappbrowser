@@ -153,6 +153,9 @@
     if (browserOptions.closebuttoncaption != nil) {
         [self.inAppBrowserViewController setCloseButtonTitle:browserOptions.closebuttoncaption];
     }
+    if (browserOptions.title != nil) {
+        [self.inAppBrowserViewController setTitle:browserOptions.title];
+    }
     // Set Presentation Style
     UIModalPresentationStyle presentationStyle = UIModalPresentationFullScreen; // default
     if (browserOptions.presentationstyle != nil) {
@@ -524,7 +527,7 @@
     self.toolbar.alpha = 1.000;
     self.toolbar.autoresizesSubviews = YES;
     self.toolbar.autoresizingMask = toolbarIsAtBottom ? (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin) : UIViewAutoresizingFlexibleWidth;
-    self.toolbar.barStyle = UIBarStyleBlackOpaque;
+    self.toolbar.barStyle = UIBarStyleDefault;
     self.toolbar.clearsContextBeforeDrawing = NO;
     self.toolbar.clipsToBounds = NO;
     self.toolbar.contentMode = UIViewContentModeScaleToFill;
@@ -575,9 +578,11 @@
     self.backButton.enabled = YES;
     self.backButton.imageInsets = UIEdgeInsetsZero;
 
-    [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
+    [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton]];
+    
 
-    self.view.backgroundColor = [UIColor grayColor];
+
+    self.view.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.toolbar];
     [self.view addSubview:self.addressLabel];
     [self.view addSubview:self.spinner];
@@ -586,6 +591,25 @@
 - (void) setWebViewFrame : (CGRect) frame {
     NSLog(@"Setting the WebView's frame to %@", NSStringFromCGRect(frame));
     [self.webView setFrame:frame];
+}
+
+- (void)setTitle:(NSString*)title
+{
+    UILabel *labelTitle = [[UILabel alloc] init];
+    labelTitle.font =[UIFont fontWithName:@"Helvetica" size:18];
+    labelTitle.backgroundColor = [UIColor clearColor];
+    labelTitle.textAlignment = NSTextAlignmentCenter;
+    labelTitle.userInteractionEnabled = NO;
+    labelTitle.text = title;
+    [labelTitle sizeToFit];
+    CGRect labelTitleFrame = labelTitle.frame;
+    labelTitleFrame.size.width = self.toolbar.bounds.size.width - 80;
+    labelTitleFrame.origin.x = 60;
+    labelTitleFrame.origin.y = (self.toolbar.bounds.size.height - labelTitleFrame.size.height) / 2;
+    labelTitle.frame = labelTitleFrame;
+    labelTitle.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self.toolbar addSubview:labelTitle];
+    labelTitle = nil;
 }
 
 - (void)setCloseButtonTitle:(NSString*)title
@@ -910,6 +934,7 @@
         self.location = YES;
         self.toolbar = YES;
         self.closebuttoncaption = nil;
+        self.title = nil;
         self.toolbarposition = kInAppBrowserToolbarBarPositionBottom;
         self.clearcache = NO;
         self.clearsessioncache = NO;
